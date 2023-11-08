@@ -26,7 +26,7 @@ export class User {
 
   @CreateDateColumn()
   @IsDate()
-  createAT: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
   @IsDate()

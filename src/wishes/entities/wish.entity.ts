@@ -26,7 +26,7 @@ export class Wish {
 
   @CreateDateColumn()
   @IsDate()
-  createAT: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
   @IsDate()

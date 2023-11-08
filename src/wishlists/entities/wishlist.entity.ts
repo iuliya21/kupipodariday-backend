@@ -1,9 +1,12 @@
 import { IsDate, IsInt, IsUrl, Length, MaxLength } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -17,7 +20,7 @@ export class Wishlist {
 
   @CreateDateColumn()
   @IsDate()
-  createAT: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
   @IsDate()
@@ -37,4 +40,8 @@ export class Wishlist {
 
   @ManyToOne(() => User, (user) => user.wishlists)
   owner: User;
+
+  @ManyToMany(() => Wish, (wish) => wish.name)
+  @JoinTable()
+  items: Wish[];
 }
