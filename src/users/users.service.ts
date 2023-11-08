@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,36 +12,34 @@ import { ProviderHash } from 'src/utils';
 
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async findByEmail(email: string) {
     return await this.usersRepository.findOneBy({
-      email
-    })
-
+      email,
+    });
   }
 
   async findUserByName(username: string) {
     return await this.usersRepository.findOne({
       where: {
-        username: username
-      }
-    })
+        username: username,
+      },
+    });
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const username = await this.findUserByName(createUserDto.username)
+    const username = await this.findUserByName(createUserDto.username);
     const email = await this.findByEmail(createUserDto.email);
 
     if (username !== null) {
-      throw new ForbiddenException('User with this name already exists')
+      throw new ForbiddenException('User with this name already exists');
     }
     if (email) {
-      throw new ForbiddenException('User with this email already exists')
+      throw new ForbiddenException('User with this email already exists');
     }
 
     const user = this.usersRepository.create(createUserDto);
@@ -50,11 +52,10 @@ export class UsersService {
     try {
       const user = await this.usersRepository.findOneBy({ id });
       if (!user) {
-        throw new NotFoundException(`User with this ${id} not found`)
+        throw new NotFoundException(`User with this ${id} not found`);
       }
 
       return user;
-
     } catch (error) {
       console.error(error);
     }
@@ -67,7 +68,9 @@ export class UsersService {
   async updateOne(id: number, updateUserDto: UpdateUserDto) {
     try {
       if (updateUserDto.password) {
-        updateUserDto.password = await ProviderHash.createHash(updateUserDto.password)
+        updateUserDto.password = await ProviderHash.createHash(
+          updateUserDto.password,
+        );
       }
       if (updateUserDto.username) {
         const username = await this.findUserByName(updateUserDto.username);
@@ -93,7 +96,7 @@ export class UsersService {
     const user = await this.usersRepository.findOne({
       select: ['id', 'username', 'about', 'avatar', 'createdAt', 'updatedAt'],
       where: { username },
-    })
+    });
     if (!user) {
       throw new NotFoundException(`User ${username} not found`);
     }
@@ -109,20 +112,20 @@ export class UsersService {
       where: {
         id,
       },
-    })
+    });
   }
 
   async findAllUsers(query: string) {
     return await this.usersRepository.find({
       where: [{ username: query }, { email: query }],
-    })
+    });
   }
 
   async findMyWishes(id: number) {
     const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
-      throw new NotFoundException(`User with ${id} not found`)
+      throw new NotFoundException(`User with ${id} not found`);
     }
     const wishes = await this.usersRepository.find({
       select: ['wishes'],
@@ -143,8 +146,8 @@ export class UsersService {
       },
       where: {
         id: id,
-      }
-    })
+      },
+    });
 
     const arrayWishes = wishes.map((item) => item.wishes);
 

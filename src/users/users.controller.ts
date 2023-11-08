@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Req, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+  Req,
+  ForbiddenException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -10,7 +20,7 @@ interface UserRequest extends Request {
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtGuard)
   @Post('find')
@@ -57,7 +67,9 @@ export class UsersController {
   @Get(':username/wishes')
   async getUsersWishes(@Param() params: { username: string }) {
     try {
-      const user = await this.usersService.findUserByAllCredentials(params.username);
+      const user = await this.usersService.findUserByAllCredentials(
+        params.username,
+      );
       return await this.usersService.findMyWishes(user.id);
     } catch (error) {
       console.error(error);
@@ -72,9 +84,7 @@ export class UsersController {
   ) {
     const user = this.usersService.findOne(req.user.id);
     if (!user) {
-      throw new ForbiddenException(
-        'You update only your profile',
-      );
+      throw new ForbiddenException('You update only your profile');
     }
     const { id } = req.user;
     await this.usersService.updateOne(id, updateUserDto);
