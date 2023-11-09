@@ -61,10 +61,6 @@ export class UsersService {
     }
   }
 
-  findAll() {
-    return `This action returns all users`;
-  }
-
   async updateOne(id: number, updateUserDto: UpdateUserDto) {
     try {
       if (updateUserDto.password) {
